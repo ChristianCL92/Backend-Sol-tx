@@ -1,13 +1,16 @@
 import { TypeOrmModuleOptions } from "@nestjs/typeorm";
+import { ConfigService } from "@nestjs/config";
 
-export const databaseConfig: TypeOrmModuleOptions = {
+export const getDatabaseConfig = (configService: ConfigService): TypeOrmModuleOptions => ({
     type: 'postgres',
-  host: process.env.DB_HOST || 'localhost',
-  port: parseInt(process.env.DB_PORT || "5432", 10),
-  username: process.env.DB_USERNAME || 'postgres',
-  password: process.env.DB_PASSWORD || 'password',
-  database: process.env.DB_NAME || 'solana_app',
+  host: configService.get<string>('DB_HOST'),
+  port: configService.get<number>('DB_PORT'),
+  username: configService.get<string>('DB_USERNAME'),
+  password: configService.get<string>('DB_PASSWORD'),
+  database: configService.get<string>('DB_NAME'),
   entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-  synchronize: process.env.NODE_ENV !== 'production',
-  logging: process.env.NODE_ENV === 'development',
-}
+  synchronize: configService.get<string>('NODE_ENV') === 'development',
+  ssl: {
+    rejectUnauthorized: false,
+  },
+})
