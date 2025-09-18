@@ -1,9 +1,14 @@
-import {Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn} from "typeorm";
+import {Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany} from "typeorm";
+import { WalletHistory } from "./wallet-history.entity";
+
 
 @Entity("wallets")
 export class Wallet {
  @PrimaryGeneratedColumn("uuid")
  id: string;
+
+ @OneToMany(() => WalletHistory, (history) => history.wallet)
+ history: WalletHistory[]
 
  @Column({ unique: true, length: 44 })
   publicKey: string;
@@ -26,7 +31,7 @@ export class Wallet {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: "timestamp" })
   lastActiveAt: Date;
 
 }
