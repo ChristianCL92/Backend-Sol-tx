@@ -13,7 +13,7 @@ export class Wallet {
   @Column({ default: 'mainnet' })
   network: string;
 
-  @Column('decimal', { precision: 18, scale: 9, default: 0 })
+  @Column('decimal', { precision: 18, scale: 9 })
   lastKnownBalance: number;
 
   @Column('float', { default: 0.001 })

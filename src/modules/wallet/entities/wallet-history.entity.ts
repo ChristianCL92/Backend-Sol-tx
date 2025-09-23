@@ -20,7 +20,7 @@ export class WalletHistory {
    @Column()
    walletId: string
 
-   @Column("decimal", {precision: 18, scale: 12, nullable: true})
+   @Column("decimal", {precision: 18, scale: 9})
    balance: number
 
     @Column("decimal",{ precision: 4, scale: 4, nullable: true })
