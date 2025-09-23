@@ -23,7 +23,7 @@ export class WalletHistory {
    @Column("decimal", {precision: 18, scale: 9})
    balance: number
 
-    @Column("decimal",{ precision: 4, scale: 4, nullable: true })
+  @Column('float', { nullable: true })
   spamThreshold: number;
 
   @Column({nullable: true})
