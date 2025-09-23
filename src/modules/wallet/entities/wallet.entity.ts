@@ -7,9 +7,6 @@ export class Wallet {
  @PrimaryGeneratedColumn("uuid")
  id: string;
 
- @OneToMany(() => WalletHistory, (history) => history.wallet)
- history: WalletHistory[]
-
  @Column({ unique: true, length: 44 })
   publicKey: string;
 
@@ -19,7 +16,7 @@ export class Wallet {
   @Column('decimal', { precision: 18, scale: 9, default: 0 })
   lastKnownBalance: number;
 
-  @Column('decimal', { precision: 4, scale: 4, default: 0.001 })
+  @Column('float', { default: 0.001 })
   spamThreshold: number;
 
   @Column({ default: 10 })
@@ -33,5 +30,8 @@ export class Wallet {
 
   @Column({ nullable: true, type: "timestamp" })
   lastActiveAt: Date;
+
+  @OneToMany(() => WalletHistory, (history) => history.wallet)
+ history: WalletHistory[]
 
 }
