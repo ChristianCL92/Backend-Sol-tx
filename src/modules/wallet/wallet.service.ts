@@ -23,14 +23,12 @@ async create(createWalletDto: CreateWalletDto): Promise<Wallet> {
       throw new ConflictException("Wallet instance already present");
     }
 
-    // Create wallet
     const wallet = this.walletRepository.create({
       ...createWalletDto,
       createdAt: new Date()
     });
     const savedWallet = await this.walletRepository.save(wallet);
 
-    // Create initial history record
     await this.createHistoryRecord(savedWallet, 'initial_connect');
 
     return savedWallet;
@@ -46,7 +44,6 @@ async create(createWalletDto: CreateWalletDto): Promise<Wallet> {
       throw new NotFoundException("wallet not found");
     }
 
-    // Create history record for activity tracking
     await this.createHistoryRecord(wallet, 'activity_ping');
 
     wallet.lastActiveAt = new Date();
@@ -59,10 +56,7 @@ async create(createWalletDto: CreateWalletDto): Promise<Wallet> {
     if (!wallet) {
       throw new NotFoundException("Wallet not found");
     }
-
-    // Create history record BEFORE updating (saves current state)
     
-    // Your existing update logic
     Object.assign(wallet, updatawalletDto);
     await this.createHistoryRecord(wallet, this.determineChangeType(updatawalletDto));
     return await this.walletRepository.save(wallet);
@@ -80,7 +74,6 @@ async create(createWalletDto: CreateWalletDto): Promise<Wallet> {
       throw new NotFoundException("no wallet found");
     }
 
-    // Get history count for additional stats
     const historyCount = await this.walletHistoryRepository.count({
       where: { walletId: wallet.id }
     });
@@ -99,7 +92,6 @@ async create(createWalletDto: CreateWalletDto): Promise<Wallet> {
     };
   }
 
-  // NEW: Get wallet history
   async getWalletHistory(publicKey: string): Promise<WalletHistory[]> {
     const wallet = await this.findByPublicKey(publicKey);
     if (!wallet) {
@@ -112,7 +104,6 @@ async create(createWalletDto: CreateWalletDto): Promise<Wallet> {
     });
   }
 
-  // NEW: Helper method to create history records
   private async createHistoryRecord(wallet: Wallet, changeType: string): Promise<void> {
     const historyRecord = this.walletHistoryRepository.create({
       walletId: wallet.id,
@@ -126,7 +117,6 @@ async create(createWalletDto: CreateWalletDto): Promise<Wallet> {
     await this.walletHistoryRepository.save(historyRecord);
   }
 
-  // NEW: Helper to determine what changed
   private determineChangeType(updateDto: UpdateWalletDto): string {
     if (updateDto.lastKnownBalance !== undefined) return 'balance_update';
     if (updateDto.spamThreshold !== undefined) return 'threshold_change';
