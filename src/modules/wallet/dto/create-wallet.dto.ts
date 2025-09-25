@@ -12,7 +12,7 @@ export class CreateWalletDto {
     @IsOptional()
     @IsNumber()
     @Type(() => Number)
-    lastKnownBalance: number
+    balance: number
 
     @IsOptional()
     @Min(0)
