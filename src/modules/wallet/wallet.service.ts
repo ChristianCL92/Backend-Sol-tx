@@ -25,7 +25,7 @@ async create(createWalletDto: CreateWalletDto): Promise<Wallet> {
 
     const wallet = this.walletRepository.create({
       ...createWalletDto,
-      createdAt: new Date()
+      lastKnownBalance: createWalletDto.balance,
     });
     const savedWallet = await this.walletRepository.save(wallet);
 
@@ -56,8 +56,13 @@ async create(createWalletDto: CreateWalletDto): Promise<Wallet> {
     if (!wallet) {
       throw new NotFoundException("Wallet not found");
     }
+
+    const updateData = {
+      ...updatawalletDto,
+      lastKnownBalance: updatawalletDto.balance
+    };
     
-    Object.assign(wallet, updatawalletDto);
+    Object.assign(wallet, updateData);
     await this.createHistoryRecord(wallet, this.determineChangeType(updatawalletDto));
     return await this.walletRepository.save(wallet);
   }
@@ -118,7 +123,7 @@ async create(createWalletDto: CreateWalletDto): Promise<Wallet> {
   }
 
   private determineChangeType(updateDto: UpdateWalletDto): string {
-    if (updateDto.lastKnownBalance !== undefined) return 'balance_update';
+    if (updateDto.balance !== undefined) return 'balance_update';
     if (updateDto.spamThreshold !== undefined) return 'threshold_change';
     if (updateDto.preferredTxLimit !== undefined) return 'txlimit_change';
     return 'general_update';
